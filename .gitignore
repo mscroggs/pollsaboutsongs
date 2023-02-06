@@ -1,0 +1,4 @@
+*.pyc
+mastodon.secret
+
+.*.swp
