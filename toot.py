@@ -1,11 +1,14 @@
 from urllib.request import urlopen
 from mastodon import Mastodon
-#from songs import load_songs
 import random
 from datetime import datetime
 from time import sleep
+import sys
 
-mdon = Mastodon(access_token="mastodon.secret", api_base_url="https://botsin.space")
+test = "test" in sys.argv
+
+if not test:
+    mdon = Mastodon(access_token="mastodon.secret", api_base_url="https://botsin.space")
 
 answers = {
     "WHERE": ["Under the sink", "China", "Scotland", "The international space station", "Germany", "Lower Brailes", "South Africa",
@@ -24,6 +27,8 @@ answers = {
             "Neil Buchanan", "Wendy Warlock"],
     "HOW MUCH": ["$10", "A year", "50p", "£12", "A million", "13", "One"],
     "HOW LONG": ["A week", "Two days", "Six metres", "37 minutes", "Two years", "A furlong", "A lightyear"],
+    "WHAT TIME": ["1", "2", "3 o'clock", "4 o'clock rock", "5", "6", "7 o'clock", "8 o'clock rock", "9", "10", "11 o'clock", "12 o'clock rock",
+                  "Hammer time", "Chico time"],
     "WHAT": ["An egg", "A duck", "The moon", "Jesus", "A bacon sandwich", "Woolworths", "Magikarp", "The bible", "Pussycat", "Kitchen table",
              "Lucy", "Your wallet", "A cup of tea", "A haircut", "The seaside", "iPhone 4S"],
     "WHY": ["Because the Night", "Because We Want To", "Because You're Mine", "Because They're Young", "Because",
@@ -35,12 +40,12 @@ answers = {
     "ARE": ["Yes", "No"],
     "AM": ["Yes", "No"],
     "HAVE": ["Yes", "No"],
+    "WOULD": ["Yes", "No"],
+    "WILL": ["Yes", "No"],
 }
 
 
 def is_question(q):
-    if q.startswith("BECAUSE"):
-        print(q)
     if not q.endswith("?"):
         return False
     for word in answers:
@@ -68,7 +73,8 @@ for i in range(50):
     if len(titles) >= max(1, 10 - i):
         break
 
-    sleep(10)
+    if not test:
+        sleep(10)
 
 if len(titles) == 0:
     raise ValueError("Song not found")
@@ -92,6 +98,9 @@ for i in range(4):
         o.append(random.choice(answers))
         answers.remove(o[-1])
 
-poll = mdon.make_poll(o, 60*60*24)
-mdon.status_post(status=f"{q[0]} ({q[1]})", poll=poll)
+if test:
+    print(f"if not testing, I would toot: {q[0]} ({q[1]}): " + ", ".join(o))
+else:
+    poll = mdon.make_poll(o, 60*60*24)
+    mdon.status_post(status=f"{q[0]} ({q[1]})", poll=poll)
 
