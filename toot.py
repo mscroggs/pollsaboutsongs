@@ -98,9 +98,12 @@ for i in range(4):
         o.append(random.choice(answers))
         answers.remove(o[-1])
 
+toot = f"{q[0]} ({q[1]})"
+toot = toot.replace("&amp;", "&")
+
 if test:
-    print(f"if not testing, I would toot: {q[0]} ({q[1]}): " + ", ".join(o))
+    print(f"if not testing, I would toot: {toot}: " + ", ".join(o))
 else:
     poll = mdon.make_poll(o, 60*60*24)
-    mdon.status_post(status=f"{q[0]} ({q[1]})", poll=poll)
+    mdon.status_post(status=toot", poll=poll)
 
