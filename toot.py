@@ -8,8 +8,7 @@ import sys
 
 test = "test" in sys.argv
 
-if not test:
-    mdon = Mastodon(access_token="mastodon.secret", api_base_url="https://botsin.space")
+mdon = Mastodon(access_token="mastodon.secret", api_base_url="https://botsin.space")
 
 answers = {
     "WHERE": ["Under the sink", "China", "Scotland", "The international space station", "Germany", "Lower Brailes", "South Africa",
@@ -36,6 +35,7 @@ answers = {
             "Because I Love You (The Postman Song)", "Because of You", "Because You Loved Me", "Because I Got High"],
     "HOW": ["With difficulty", "By trying hard", "With a Little Help from My Friends"],
     "DO": ["Yes", "No"],
+    "DA": ["Yes", "No"],
     "CAN": ["Yes", "No"],
     "IS": ["Yes", "No"],
     "ARE": ["Yes", "No"],
@@ -80,6 +80,13 @@ for i in range(50):
 if len(titles) == 0:
     raise ValueError("Song not found")
 
+for a in mdon.account_statuses(mdon.me(), limit=7):
+    titles = [i for i in titles if html.unescape(i[0]) not in html.unescape(a["content"])]
+
+if test:
+    for t in titles:
+        print(t)
+
 q = random.choice(titles)
 
 for word, options in answers.items():
@@ -99,12 +106,11 @@ for i in range(4):
         o.append(random.choice(answers))
         answers.remove(o[-1])
 
-toot = f"{q[0]} ({q[1]})"
-toot = html.unescape(toot)
+toot = html.unescape(f"{q[0]} ({q[1]})")
 
 if test:
     print(f"if not testing, I would toot: {toot}: " + ", ".join(o))
 else:
     poll = mdon.make_poll(o, 60*60*24)
-    mdon.status_post(status=toot", poll=poll)
+    mdon.status_post(status=toot, poll=poll)
 
