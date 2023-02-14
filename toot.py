@@ -1,6 +1,7 @@
 from urllib.request import urlopen
 from mastodon import Mastodon
 import random
+import html
 from datetime import datetime
 from time import sleep
 import sys
@@ -99,7 +100,7 @@ for i in range(4):
         answers.remove(o[-1])
 
 toot = f"{q[0]} ({q[1]})"
-toot = toot.replace("&amp;", "&")
+toot = html.unescape(toot)
 
 if test:
     print(f"if not testing, I would toot: {toot}: " + ", ".join(o))
