@@ -55,8 +55,11 @@ def is_question(q):
     print(title)
     return False
 
+done = [html.unescape(a["content"]) for a in mdon.account_statuses(mdon.me(), limit=7)]
 
-for i in range(50):
+
+i = 0
+while True:
     y = random.randrange(1952, datetime.now().year + 1)
     m = random.randrange(1, 13)
     d = random.randrange(1, 32)
@@ -69,19 +72,18 @@ for i in range(50):
     for t in page.split("<div class=\"track\">")[1:]:
         title = t.split("<div class=\"title\">")[1].split(">")[1].split("<")[0]
         artist = t.split("<div class=\"artist\">")[1].split(">")[1].split("<")[0]
-        if is_question(title):
-            titles.append((title, artist))
+        toot = html.unescape(f"{title} (artist)")
+        if is_question(title) and toot not in done:
+            titles.append((title, artist, toot))
     if len(titles) >= max(1, 10 - i):
         break
 
+    i += 1
     if not test:
         sleep(10)
 
 if len(titles) == 0:
-    raise ValueError("Song not found")
-
-for a in mdon.account_statuses(mdon.me(), limit=7):
-    titles = [i for i in titles if html.unescape(i[0]) not in html.unescape(a["content"])]
+    raise RuntimeError("Song not found. This should never happen")
 
 if test:
     for t in titles:
@@ -105,8 +107,6 @@ for i in range(4):
     if len(answers) > 0:
         o.append(random.choice(answers))
         answers.remove(o[-1])
-
-toot = html.unescape(f"{q[0]} ({q[1]})")
 
 if test:
     print(f"if not testing, I would toot: {toot}: " + ", ".join(o))
