@@ -72,7 +72,7 @@ while True:
     for t in page.split("<div class=\"track\">")[1:]:
         title = t.split("<div class=\"title\">")[1].split(">")[1].split("<")[0]
         artist = t.split("<div class=\"artist\">")[1].split(">")[1].split("<")[0]
-        toot = html.unescape(f"{title} (artist)")
+        toot = html.unescape(f"{title} ({artist})")
         if is_question(title) and toot not in done:
             titles.append((title, artist, toot))
     if len(titles) >= max(1, 10 - i):
@@ -109,8 +109,8 @@ for i in range(4):
         answers.remove(o[-1])
 
 if test:
-    print(f"if not testing, I would toot: {toot}: " + ", ".join(o))
+    print(f"if not testing, I would toot: {q[2]}: " + ", ".join(o))
 else:
     poll = mdon.make_poll(o, 60*60*24)
-    mdon.status_post(status=toot, poll=poll)
+    mdon.status_post(status=q[2], poll=poll)
 
